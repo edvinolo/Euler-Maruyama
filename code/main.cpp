@@ -30,18 +30,22 @@ int main(int argc, char* argv[])
 
     std::ofstream output_file("./example.txt");
 
+    int N_omp = 20;
+
     double t1 = omp_get_wtime();
-    //#pragma omp parallel shared(y_0,params,OU)
+    #pragma omp parallel shared(y_0,params,OU)
     {
-        //#pragma omp for
-        for (size_t i = 0; i < 5; i++)
+        #pragma omp for
+        for (size_t i = 0; i < N_omp; i++)
         {
             Euler_Maruyama test_2(&params,y_0);
 
             test_2.run_simulation(&OU);
 
-            write_line(test_2.get_y(),output_file);
-
+            #pragma omp critical
+            {
+                write_line(test_2.get_y(),output_file);
+            }
         }
 
     }
