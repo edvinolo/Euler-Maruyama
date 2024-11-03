@@ -1,5 +1,6 @@
 #include "Euler_Maruyama.hpp"
 #include "Ornstein_Uhlenbeck.hpp"
+#include "file_io.hpp"
 #include <mpi.h>
 #include <omp.h>
 #include <stdio.h>
@@ -17,7 +18,7 @@ int main(int argc, char* argv[])
 
     double y_0 = 0.0;
     time_params params = {0.0,4.0,1000};
-    parameters OU_params = {0.7,1.5,0.06};
+    parameters OU_params = {0.7,1.5,0.6};
 
     if (rank == 0)
     {
@@ -27,15 +28,20 @@ int main(int argc, char* argv[])
 
     test.run_simulation(&OU);
 
+    std::ofstream output_file("./example.txt");
+
     double t1 = omp_get_wtime();
-    #pragma omp parallel shared(y_0,params,OU)
+    //#pragma omp parallel shared(y_0,params,OU)
     {
-        #pragma omp for
-        for (size_t i = 0; i < 2; i++)
+        //#pragma omp for
+        for (size_t i = 0; i < 5; i++)
         {
             Euler_Maruyama test_2(&params,y_0);
 
             test_2.run_simulation(&OU);
+
+            write_line(test_2.get_y(),output_file);
+
         }
 
     }
@@ -43,16 +49,7 @@ int main(int argc, char* argv[])
     printf("Time per iteration: %f \n",(t2-t1)/10);
 
     std::vector<double> test_y = test.get_y();
-
-    std::ofstream output_file("./example.txt");
-
-    for (size_t i = 0; i < test_y.size(); i++)
-    {
-        output_file << test_y[i] << "\n";
     }
-    output_file.close();
-    }
-
 
     printf("\n");
     printf("Switching to MPI stuff ...\n"); 
