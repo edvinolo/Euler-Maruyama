@@ -41,7 +41,9 @@ public:
     template <typename T>
     void run_simulation (T*);
 
-    std::vector<double> get_y();
+    const std::vector<double>& get_y();
+    std::vector<double> get_y_copy();
+    std::vector<double> get_time();
 };
 
 template <typename T>
@@ -61,7 +63,7 @@ void Euler_Maruyama::run_simulation(T* model)
         y[i+1] = y[i] + model->RHS(y[i],dW,dt);
     }
 
-    printf("%f, %.15f, %.15f \n",time[params->samples-1],y[params->samples-1],y[10]);
+    //printf("%f, %.15f, %.15f \n",time[params->samples-1],y[params->samples-1],y[10]);
 
 }
 

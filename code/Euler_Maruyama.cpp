@@ -23,7 +23,17 @@ void Euler_Maruyama::setup_arrays(){
     y[0] = y_0;
 }
 
-std::vector<double> Euler_Maruyama::get_y()
+const std::vector<double>& Euler_Maruyama::get_y()
+{
+    return this->y;
+}
+
+std::vector<double> Euler_Maruyama::get_y_copy()
 {
     return y;
+}
+
+std::vector<double> Euler_Maruyama::get_time()
+{
+    return time;
 }
